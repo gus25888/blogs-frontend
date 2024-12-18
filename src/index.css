@@ -1,0 +1,34 @@
+.notification {
+  width: 50%;
+}
+
+.success {
+  color: green;
+  background: lightgrey;
+  font-size: 20px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.error {
+  color: red;
+  background: lightgrey;
+  font-size: 20px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+form.blogForm {
+  margin-left: 5px;
+  margin-bottom: 30px;
+}
+
+form.blogForm label {
+  display: inline-block;
+  margin-right: 5px;
+  width: 50px;
+}

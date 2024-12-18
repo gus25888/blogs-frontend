@@ -5,10 +5,17 @@ import loginService from './services/login'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
+import Notification from './components/Notification'
 
+const messageTypes = {
+  SUCCESS: 'success',
+  ERROR: 'error'
+}
 
 const App = () => {
   const USER_LOGIN = 'blogListUser'
+
+  /* ********* States ********* */
 
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
@@ -17,6 +24,11 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+
+  const [messageText, setMessageText] = useState(null)
+  const [messageType, setMessageType] = useState('')
+
+  /* *********  Effects  ********* */
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -29,9 +41,18 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
-      // blogService.setToken(user.token)
+      blogService.setToken(user.token)
     }
   }, [])
+
+
+  /* ********* Functions ********* */
+
+  const showMessage = (message, type) => {
+    setMessageText(message)
+    setMessageType(type)
+    setTimeout(() => setMessageText(null), 5000)
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -42,6 +63,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
+      showMessage(`wrong username or password`, messageTypes.ERROR)
       console.error(exception)
     }
   }
@@ -52,10 +74,29 @@ const App = () => {
   }
 
 
-  const handleCreateBlog = () => {
+  const handleCreateBlog = async (event) => {
+    event.preventDefault()
+    try {
+      const newBlog = { title, author, url, }
+
+      const blogCreated = await blogService.create(newBlog)
+
+      if (blogCreated) {
+        setBlogs(blogs.concat(blogCreated))
+
+        setTitle('')
+        setAuthor('')
+        setUrl('')
+        showMessage(`blog "${blogCreated.title}" by ${blogCreated.author} added`, messageTypes.SUCCESS)
+      }
+    } catch (exception) {
+      showMessage(`${exception.response.data.error || 'server error'}`, messageTypes.ERROR)
+      console.error(exception)
+    }
 
   }
 
+  /* ********* Final Display ********* */
   if (!user) {
     return (
       <div>
@@ -67,8 +108,11 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      <Notification notificationText={messageText} notificationType={messageType} />
       <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
+      <h3>Add new Blog</h3>
       {BlogForm({ title, author, url, setTitle, setAuthor, setUrl, handleCreateBlog })}
+      <h3>Blogs added</h3>
       {blogs.map(blog => <Blog key={blog.id} blog={blog} />)}
     </div>
   )
