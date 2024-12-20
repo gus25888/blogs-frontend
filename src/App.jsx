@@ -87,11 +87,42 @@ const App = () => {
         blogFormRef.current.toggleVisibility()
       }
     } catch (exception) {
-      showMessage(`${exception.response.data.error || 'server error'}`, messageTypes.ERROR)
+      const errorMessage = exception.response?.data.error
+      showMessage(`${errorMessage || 'server error'}`, messageTypes.ERROR)
       console.error(exception)
     }
   }
 
+  const updateBlog = async (id, blog) => {
+    try {
+      const blogUpdated = await blogService.update(id, blog)
+
+      if (blogUpdated) {
+        const { id: blogId } = blogUpdated
+
+        setBlogs(blogs.filter(blog => blog.id !== blogId).concat(blogUpdated))
+        showMessage(`likes updated for blog "${blogUpdated.title}"`, messageTypes.SUCCESS)
+      }
+    } catch (exception) {
+      const errorMessage = exception.response?.data.error
+      showMessage(`${errorMessage || 'server error'}`, messageTypes.ERROR)
+      console.error(exception)
+    }
+  }
+
+  const deleteBlog = async (id, blog) => {
+    try {
+      await blogService.deleteRegister(id, blog)
+
+      setBlogs(blogs.filter(blog => blog.id !== id))
+      showMessage(`blog deleted`, messageTypes.SUCCESS)
+
+    } catch (exception) {
+      const errorMessage = exception.response?.data.error
+      showMessage(`${errorMessage || 'server error'}`, messageTypes.ERROR)
+      console.error(exception)
+    }
+  }
   /* ********* Final Display ********* */
   if (!user) {
     return (
@@ -111,7 +142,12 @@ const App = () => {
         <BlogForm addBlog={createBlog} />
       </Toggable>
       <h3>Blogs added</h3>
-      {blogs.map(blog => <Blog key={blog.id} blog={blog} />)}
+      {
+        /* blogs are sorted in descending order */
+        blogs
+          .sort((a, b) => (a.likes > b.likes) ? -1 : (a.likes < b.likes) ? 1 : 0)
+          .map(blog => <Blog key={blog.id} user={user} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} />)
+      }
     </div>
   )
 }
