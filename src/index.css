@@ -32,3 +32,22 @@ form.blogForm label {
   margin-right: 5px;
   width: 50px;
 }
+
+div.blog {
+  border: 1px solid deepskyblue;
+  padding-bottom: 5px;
+}
+
+div.blogTitle {
+  font-weight: bold;
+}
+
+div.blogTitle button {
+  margin-left: 5px;
+}
+
+div.blogDetails span {
+  display: block;
+  margin-left: 5px;
+  margin-top: 3px;
+}
