@@ -65,7 +65,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      showMessage(`wrong username or password`, messageTypes.ERROR)
+      showMessage('wrong username or password', messageTypes.ERROR)
       console.error(exception)
     }
   }
@@ -115,7 +115,7 @@ const App = () => {
       await blogService.deleteRegister(id, blog)
 
       setBlogs(blogs.filter(blog => blog.id !== id))
-      showMessage(`blog deleted`, messageTypes.SUCCESS)
+      showMessage('blog deleted', messageTypes.SUCCESS)
 
     } catch (exception) {
       const errorMessage = exception.response?.data.error

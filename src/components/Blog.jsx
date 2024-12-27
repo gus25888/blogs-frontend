@@ -38,7 +38,7 @@ const Blog = ({ user, blog, updateBlog, deleteBlog }) => {
   )
 }
 
-Blog.PropTypes = {
+Blog.propTypes = {
   user: PropTypes.shape({
     username: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
