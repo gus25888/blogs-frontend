@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types'
 import { useState } from 'react'
 
 const Blog = ({ user, blog, updateBlog, deleteBlog }) => {
@@ -30,30 +29,12 @@ const Blog = ({ user, blog, updateBlog, deleteBlog }) => {
       </div>
       <div className="blogDetails" style={visibility}>
         <a href={blog.url}>{blog.url}</a>
-        <span>{`likes: ${blog.likes}`} <button onClick={() => updateLikes(blog)}>like</button></span>
-        <span>{blog.user.name}</span>
+        <span className='likes'>{`likes: ${blog.likes}`} </span> <button onClick={() => updateLikes(blog)}>like</button>
+        <span className='user'>{blog.user.name || 'Unassigned user'}</span>
         {(blog.user.username === user.username) ? <button onClick={() => removeBlog(blog)}>remove</button> : null}
       </div>
     </div>
   )
-}
-
-Blog.propTypes = {
-  user: PropTypes.shape({
-    username: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-    id: PropTypes.string.isRequired,
-  }),
-  blog: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    author: PropTypes.string,
-    url: PropTypes.string.isRequired,
-    user: PropTypes.string.isRequired,
-    likes: PropTypes.number.isRequired
-  }),
-  updateBlog: PropTypes.func.isRequired,
-  deleteBlog: PropTypes.func.isRequired
 }
 
 export default Blog

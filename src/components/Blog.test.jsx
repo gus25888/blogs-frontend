@@ -4,17 +4,17 @@ import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
 const blog = {
-  "id": "5a422a851b54a676234d17f7",
-  "title": "React patterns",
-  "author": "Michael Chan",
-  "url": "https://reactpatterns.com/",
-  "likes": 7,
-  "user": "675c99e55cab73162fd45b8a"
+  'id': '5a422a851b54a676234d17f7',
+  'title': 'React patterns',
+  'author': 'Michael Chan',
+  'url': 'https://reactpatterns.com/',
+  'likes': 7,
+  'user': '675c99e55cab73162fd45b8a'
 }
 const user = {
-  "id": "675c99e55cab73162fd45b8a",
-  "username": "pperez",
-  "name": "Pedro Perez",
+  'id': '675c99e55cab73162fd45b8a',
+  'username': 'pperez',
+  'name': 'Pedro Perez',
 }
 
 const updateBlog = vi.fn()

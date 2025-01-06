@@ -22,7 +22,7 @@ const App = () => {
 
   /* ********* States ********* */
 
-  const [blogs, setBlogs] = useState([])
+  const [blogs, setBlogs] = useState(null)
   const [user, setUser] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -33,8 +33,8 @@ const App = () => {
   /* *********  Effects  ********* */
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
+    blogService.getAll().then(blogsObtained =>
+      setBlogs(blogsObtained)
     )
   }, [])
 
@@ -42,8 +42,8 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem(USER_LOGIN)
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
       blogService.setToken(user.token)
+      setUser(user)
     }
   }, [])
 
@@ -53,7 +53,7 @@ const App = () => {
   const showMessage = (message, type) => {
     setMessageText(message)
     setMessageType(type)
-    setTimeout(() => setMessageText(null), 5000)
+    setTimeout(() => setMessageText(null), 2000)
   }
 
   const handleLogin = async (event) => {
@@ -61,6 +61,7 @@ const App = () => {
     try {
       const user = await loginService.login({ username, password })
       window.localStorage.setItem(USER_LOGIN, JSON.stringify(user))
+      blogService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
@@ -77,15 +78,12 @@ const App = () => {
 
   const createBlog = async (newBlog) => {
     try {
+      blogFormRef.current.toggleVisibility()
       const blogCreated = await blogService.create(newBlog)
-
-      if (blogCreated) {
-        setBlogs(blogs.concat(blogCreated))
-
-        showMessage(`blog "${blogCreated.title}" by ${blogCreated.author} added`, messageTypes.SUCCESS)
-
-        blogFormRef.current.toggleVisibility()
-      }
+      // Updates the userId obtained with the session data saved.
+      blogCreated.user = { ...user }
+      setBlogs(blogs.concat(blogCreated))
+      showMessage(`blog "${blogCreated.title}" by ${blogCreated.author} added`, messageTypes.SUCCESS)
     } catch (exception) {
       const errorMessage = exception.response?.data.error
       showMessage(`${errorMessage || 'server error'}`, messageTypes.ERROR)
@@ -97,12 +95,9 @@ const App = () => {
     try {
       const blogUpdated = await blogService.update(id, blog)
 
-      if (blogUpdated) {
-        const { id: blogId } = blogUpdated
+      const { id: blogId } = blogUpdated
 
-        setBlogs(blogs.filter(blog => blog.id !== blogId).concat(blogUpdated))
-        showMessage(`likes updated for blog "${blogUpdated.title}"`, messageTypes.SUCCESS)
-      }
+      setBlogs(blogs.filter(blog => blog.id !== blogId).concat(blogUpdated))
     } catch (exception) {
       const errorMessage = exception.response?.data.error
       showMessage(`${errorMessage || 'server error'}`, messageTypes.ERROR)
@@ -144,9 +139,11 @@ const App = () => {
       <h3>Blogs added</h3>
       {
         /* blogs are sorted in descending order */
-        blogs
-          .sort((a, b) => (a.likes > b.likes) ? -1 : (a.likes < b.likes) ? 1 : 0)
-          .map(blog => <Blog key={blog.id} user={user} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} />)
+        (blogs) ?
+          blogs
+            .sort((a, b) => (a.likes > b.likes) ? -1 : (a.likes < b.likes) ? 1 : 0)
+            .map(blog => <Blog key={blog.id} user={user} blog={blog} updateBlog={updateBlog} deleteBlog={deleteBlog} />)
+          : null
       }
     </div>
   )

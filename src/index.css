@@ -46,8 +46,18 @@ div.blogTitle button {
   margin-left: 5px;
 }
 
-div.blogDetails span {
+div.blogDetails a {
   display: block;
-  margin-left: 5px;
-  margin-top: 3px;
+}
+
+div.blogDetails span.likes {
+  display: inline;
+  margin-left: 3px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-weight: bolder;
+}
+
+div.blogDetails span.user {
+  display: block;
 }
